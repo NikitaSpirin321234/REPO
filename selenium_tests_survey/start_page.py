@@ -65,20 +65,30 @@ class start_page:
             return None
         else:
             button_start.click()
+            return True
+
+    def click_start_button_success(self):
+        if self.click_start_button() is True:
             return survey_page(self.driver, self.season)
+        else:
+            return None
 
     def click_start_button_alert(self):
-        self.click_start_button()
+        if self.click_start_button() is True:
+            return start_page(self.driver, self.season)
+        else:
+            return None
+
+    def find_alert(self):
         xpath = f'//div[@id="alert"]//div[@role="alert"]//strong'
         find_func = self.driver.find_element_by_xpath
         alert = try_except(find_func, xpath)
         if alert is None:
             return None
         else:
-            # alert_class = alert.get_attribute("strong")
             return alert
 
-    #def click_start_button_success(self):
+    # def click_start_button_success(self):
     #    self.click_start_button()
     #    return
 

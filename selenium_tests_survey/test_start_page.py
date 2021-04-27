@@ -75,10 +75,18 @@ class test_start_page(unittest.TestCase):
 
     def test_alert_choosing_sem(self):
         self.page.choose_direction(1)
-        url_before_click = self.driver.current_url
-        alert = self.page.click_start_button_alert()
-        url_after_click = self.driver.current_url
-        self.assertEqual(url_before_click, url_after_click)
+
+        self.page = self.page.click_start_button_alert()
+
+        self.assertNotEqual(self.page, None)
+
+        # url_match = new_start_page.get_url_match()
+        # expected_url_match = "start"
+        # self.assertEqual(url_match, expected_url_match)
+
+        alert = self.page.find_alert()
+        self.assertNotEqual(alert, None)
+
         alert_text = alert.text
         expected_alert_text = "Пожалуйста, выберите семестр!"
         self.assertEqual(alert_text, expected_alert_text)
@@ -86,10 +94,18 @@ class test_start_page(unittest.TestCase):
     def test_alert_filling_id(self):
         self.page.choose_direction(1)
         self.page.choose_sem(5)
-        url_before_click = self.driver.current_url
-        alert = self.page.click_start_button_alert()
-        url_after_click = self.driver.current_url
-        self.assertEqual(url_before_click, url_after_click)
+
+        self.page = self.page.click_start_button_alert()
+
+        self.assertNotEqual(self.page, None)
+
+        # url_match = new_start_page.get_url_match()
+        # expected_url_match = "start"
+        # self.assertEqual(url_match, expected_url_match)
+
+        alert = self.page.find_alert()
+        self.assertNotEqual(alert, None)
+
         alert_text = alert.text
         expected_alert_text = 'Пожалуйста, заполните поле "Идентификатор"!'
         self.assertEqual(alert_text, expected_alert_text)
@@ -98,4 +114,14 @@ class test_start_page(unittest.TestCase):
         self.page.choose_direction(1)
         self.page.choose_sem(5)
         # self.page.write_id("123")
-        self.page.click_start_button()
+        self.page = self.page.click_start_button_success()
+
+        self.assertNotEqual(self.page, None)
+
+        current_url = self.driver.current_url
+        expected_url = self.page.site_path + "semester/15123"
+        self.assertEqual(current_url, expected_url)
+
+        # url_match = new_survey_page.get_url_match()
+        # expected_url_match = "survey"
+        # self.assertEqual(url_match, expected_url_match)
