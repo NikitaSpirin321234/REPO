@@ -80,10 +80,6 @@ class test_start_page(unittest.TestCase):
 
         self.assertNotEqual(self.page, None)
 
-        # url_match = new_start_page.get_url_match()
-        # expected_url_match = "start"
-        # self.assertEqual(url_match, expected_url_match)
-
         alert = self.page.find_alert()
         self.assertNotEqual(alert, None)
 
@@ -98,10 +94,6 @@ class test_start_page(unittest.TestCase):
         self.page = self.page.click_start_button_alert()
 
         self.assertNotEqual(self.page, None)
-
-        # url_match = new_start_page.get_url_match()
-        # expected_url_match = "start"
-        # self.assertEqual(url_match, expected_url_match)
 
         alert = self.page.find_alert()
         self.assertNotEqual(alert, None)
@@ -121,7 +113,3 @@ class test_start_page(unittest.TestCase):
         current_url = self.driver.current_url
         expected_url = self.page.site_path + "semester/15123"
         self.assertEqual(current_url, expected_url)
-
-        # url_match = new_survey_page.get_url_match()
-        # expected_url_match = "survey"
-        # self.assertEqual(url_match, expected_url_match)

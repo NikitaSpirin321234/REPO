@@ -14,42 +14,55 @@ def try_except(func, *args):
         return None
 
 
+def try_except_find_by_xpath(elem, *args):
+    try:
+        return elem.find_element_by_xpath(*args)
+    except NoSuchElementException:
+        return None
+
+
 class survey_page:
     def __init__(self, driver, season):
         self.season = season
         self.driver = driver
         self.site_path = "http://" + season + ".survey.moevm.info/"
         self.current_name_teacher = None
+        self.current_subject = None
 
     def show_next_teacher(self):
         if self.current_name_teacher is None:
             xpath = '//a[@name]'
         else:
-            xpath = f'//a[@name="{self.current_name_teacher}"] /following::div[1][@class="content"]/a[@name]'
-        # find_func = WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable((By.XPATH, xpath)))
+            xpath = f'//a[@name="{self.current_name_teacher}"]/following::div[1][@class="content"]/b[2][text()' \
+                    f'="{self.current_subject}"]/following-sibling::a[@name] '
         find_func = self.driver.find_element_by_xpath
         next_teacher = try_except(find_func, xpath)
         if next_teacher is None:
             return None
         else:
-            # self.driver.execute_script("arguments[0].scrollIntoView();", next_teacher)
             self.current_name_teacher = next_teacher.get_attribute("name")
-            return self.current_name_teacher
+
+            xpath = './following::div[1][@class="content"]/b[2]'
+
+            # next_subject = next_teacher.find_element_by_xpath(xpath)
+
+            next_subject = try_except_find_by_xpath(next_teacher, xpath)
+
+            if next_subject is None:
+                return None
+            else:
+                self.current_subject = next_subject.text
+
+        return self.current_name_teacher
 
     def choose_rating_relevance(self, rating):
         if self.current_name_teacher is None:
             return None
         else:
-            xpath = f'//a[@name="{self.current_name_teacher}"]/following::div[1][@class="content"]' \
-                    f'/div[@data-toggle][1]//input[@value="{rating - 1}"]'
-        # last_height = self.driver.execute_script("return document.body.scrollHeight")
-        # self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        # find_func = WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable((By.XPATH, xpath)))
+            xpath = f"//a[@name='{self.current_name_teacher}']/following::div[1][@class='content']/b[2][text(" \
+                    f")='{self.current_subject}']/following::div[@data-toggle][1]//input[@value='{rating - 1}'] "
         find_func = self.driver.find_element_by_xpath
         radio_rating = try_except(find_func, xpath)
-
-        # ActionChains(self.driver).move_to_element(radio_rating).perform()
-        # radio_rating = WebDriverWait(self.driver, 8).until(EC.element_to_be_clickable((By.XPATH, xpath)))
 
         if radio_rating is None:
             return None
@@ -63,8 +76,8 @@ class survey_page:
         if self.current_name_teacher is None:
             return None
         else:
-            xpath = f'//a[@name="{self.current_name_teacher}"]/following::div[1][@class="content"]' \
-                    f'/div[@data-toggle][2]//input[@value="{rating - 1}"]'
+            xpath = f"//a[@name='{self.current_name_teacher}']/following::div[1][@class='content']/b[2][text(" \
+                    f")='{self.current_subject}']/following::div[@data-toggle][2]//input[@value='{rating - 1}'] "
         find_func = self.driver.find_element_by_xpath
         radio_rating = try_except(find_func, xpath)
         if radio_rating is None:
@@ -72,7 +85,6 @@ class survey_page:
         else:
             self.driver.execute_script("arguments[0].click();", WebDriverWait(self.driver, 20).until(
                 EC.element_to_be_clickable((By.XPATH, xpath))))
-            # radio_rating.click()
             return radio_rating
 
     def click_finish_button(self):
@@ -99,14 +111,13 @@ class survey_page:
             return None
 
     def find_alert(self):
-        xpath = '//div[@id="div_submit_results"]//div[@role="alert"]//strong]'
+        xpath = '//div[@id="div_submit_results"]//div[@role="alert"]//strong'
         find_func = self.driver.find_element_by_xpath
         alert = try_except(find_func, xpath)
         if alert is None:
             return None
         else:
             return alert
-
 
             # WebDriverWait(self.driver, 20).until(EC.visibility_of_element_located((By.XPATH, xpath)))
             # self.driver.execute_script("arguments[0].scrollIntoView();",
